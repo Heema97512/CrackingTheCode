@@ -1,0 +1,47 @@
+Given an array w of positive integers, where w[i] describes the weight of index i, write a function pickIndex which randomly picks an index in proportion to its weight.
+
+Note:
+
+1 <= w.length <= 10000
+1 <= w[i] <= 10^5
+pickIndex will be called at most 10000 times
+
+Example 1:
+
+Input: 
+["Solution","pickIndex"]
+[[[1]],[]]
+Output: [null,0]
+
+
+class Solution {
+    private int[] prefixSums;
+    private int totalSum;
+
+    public Solution(int[] w) {
+        this.prefixSums = new int[w.length];
+
+        int prefixSum = 0;
+        for (int i = 0; i < w.length; ++i) {
+            prefixSum += w[i];
+            this.prefixSums[i] = prefixSum;
+        }
+        this.totalSum = prefixSum;
+    }
+
+    public int pickIndex() {
+        double target = this.totalSum * Math.random();
+
+        // run a binary search to find the target zone
+        int low = 0, high = this.prefixSums.length;
+        while (low < high) {
+            // better to avoid the overflow
+            int mid = low + (high - low) / 2;
+            if (target > this.prefixSums[mid])
+                low = mid + 1;
+            else
+                high = mid;
+        }
+        return low;
+    }
+}
